@@ -6,7 +6,7 @@ const connect = require('../lib/utils/connect');
 const mongoose = require('mongoose');
 const Presentation = require('../lib/models/Presentation');
 
-describe('dance routes', () => {
+describe('presentation routes', () => {
   
   beforeAll(() => {
     connect();
