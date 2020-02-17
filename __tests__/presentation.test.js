@@ -32,7 +32,6 @@ describe('presentation routes', () => {
     return request(app)
       .get('/api/v1/presentation/')
       .then(res => {
-        console.log(res.body);
         return expect(res.body).toEqual(
           [
             {
