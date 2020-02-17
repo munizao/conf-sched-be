@@ -66,8 +66,6 @@ describe('presentation routes', () => {
   });
 
   it('gets all scheduled presentations', async() => {
-    await Presentation.create();
-
     return request(app)
       .get('/api/v1/presentation/?isScheduled=true')
       .then((res) => {
@@ -84,6 +82,59 @@ describe('presentation routes', () => {
             }
           ] 
         );
+      });
+  });
+
+  it('sorts presentations by timeSlot', async() => {
+    await Presentation.create([
+      {
+        title: 'Spot, and other POJOs',
+        presenter: 'Ryan M',
+        description: 'Spot is a very good POJO',
+        timeSlot: 3,
+        isScheduled: true
+      },
+      {
+        title: 'Revels Music is Awesome',
+        presenter: 'Robert L',
+        description: 'Sing with us!',
+        timeSlot: '1',
+        isScheduled: true
+      }
+    ]);
+    return request(app)
+      .get('/api/v1/presentation/?isScheduled=true')
+      .then((res) => {
+        return expect(res.body).toEqual(
+          [  
+            {
+              __v: 0,
+              _id: expect.any(String),
+              title: 'Revels Music is Awesome',
+              presenter: 'Robert L',
+              description: 'Sing with us!',
+              timeSlot: 1,
+              isScheduled: true
+            },
+            {
+              __v: 0,
+              _id: expect.any(String),
+              title: 'History of Morris Dance',
+              presenter: 'Linda G',
+              description: '1000 Years of Morris',
+              timeSlot: 2,
+              isScheduled: true,
+            },
+            {
+              __v: 0,
+              _id: expect.any(String),
+              title: 'Spot, and other POJOs',
+              presenter: 'Ryan M',
+              description: 'Spot is a very good POJO',
+              timeSlot: 3,
+              isScheduled: true
+            }
+          ]);
       });
   });
 });
