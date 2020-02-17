@@ -137,4 +137,35 @@ describe('presentation routes', () => {
           ]);
       });
   });
+
+  it('deletes a presentation by id', async() => {
+    const spot = await Presentation.create({
+      title: 'Spot, and other POJOs',
+      presenter: 'Ryan M',
+      description: 'Spot is a very good POJO',
+      timeSlot: 3,
+      isScheduled: true
+    });
+    const id = spot._id.toString();
+    const agent = request.agent(app);
+    agent
+      .delete(`/api/v1/presentation/${id}`)
+      .then((res) => {
+        return expect(res.body).toEqual(
+          {
+            __v: 0,
+            _id: id,
+            title: 'Spot, and other POJOs',
+            presenter: 'Ryan M',
+            description: 'Spot is a very good POJO',
+            timeSlot: 3,
+            isScheduled: true
+          });
+      });
+    return agent
+      .get(`/api/v1/presentation/${id}`)
+      .then((res) => {
+        return expect(res.body).toEqual({});
+      });
+  });
 });
