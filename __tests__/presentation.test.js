@@ -147,8 +147,7 @@ describe('presentation routes', () => {
       isScheduled: true
     });
     const id = spot._id.toString();
-    const agent = request.agent(app);
-    agent
+    request(app)
       .delete(`/api/v1/presentation/${id}`)
       .then((res) => {
         return expect(res.body).toEqual(
@@ -162,7 +161,7 @@ describe('presentation routes', () => {
             isScheduled: true
           });
       });
-    return agent
+    return request(app)
       .get(`/api/v1/presentation/${id}`)
       .then((res) => {
         return expect(res.body).toEqual({});
