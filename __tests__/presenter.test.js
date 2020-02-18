@@ -15,7 +15,7 @@ describe('presentation routes', () => {
 
   let presentations;
   let presenters;
-  beforeEach(async () => {
+  beforeEach(async() => {
     await mongoose.connection.dropDatabase();
     presenters = await Presenter.create([
       {
@@ -60,6 +60,23 @@ describe('presentation routes', () => {
           name: 'N. Hazmat',
           email: 'test1@test.com',
           bio: 'I\'ve been everywhere, man.'
+        });
+      });
+  });
+
+  it('gets all presenters', () => {
+    return request(app)
+      .get('/api/v1/presenter/')
+      .then(res => {
+        expect(res.body).toHaveLength(presentations.length);
+        presenters.forEach(presenter => {
+          expect(res.body).toContainEqual({
+            __v: 0,
+            _id: presenter.id,
+            bio: presenter.bio,
+            email: presenter.email,
+            name: presenter.name
+          });
         });
       });
   });
