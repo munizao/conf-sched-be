@@ -198,7 +198,6 @@ describe('presentation routes', () => {
             isScheduled: true
           });
       });
-
   });
 
   it('updates a presentation', async() => {
@@ -232,7 +231,6 @@ describe('presentation routes', () => {
             isScheduled: false
           });
       });
-
   });
 
   it('deletes a presentation by id', async() => {

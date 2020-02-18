@@ -8,14 +8,14 @@ const Presenter = require('../lib/models/Presenter');
 const Presentation = require('../lib/models/Presentation');
 
 describe('presentation routes', () => {
-  
+
   beforeAll(() => {
     connect();
   });
 
   let presentations;
   let presenters;
-  beforeEach(async() => {
+  beforeEach(async () => {
     await mongoose.connection.dropDatabase();
     presenters = await Presenter.create([
       {
@@ -46,11 +46,15 @@ describe('presentation routes', () => {
     ]);
   });
 
-  it('gets a presenter by id', async() => {
-    await request(app)
+  afterAll(() => {
+    return mongoose.connection.close();
+  });
+
+  it('gets a presenter by id', () => {
+    return request(app)
       .get(`/api/v1/presenter/${presenters[0]._id}`)
       .then((res) => {
-        return expect(res.body).toEqual({
+        expect(res.body).toEqual({
           _id: presenters[0]._id.toString(),
           __v: 0,
           name: 'N. Hazmat',
