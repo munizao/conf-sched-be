@@ -50,6 +50,23 @@ describe('presentation routes', () => {
     return mongoose.connection.close();
   });
 
+  it('can create a presenter', () => {
+    return request(app)
+      .post('/api/v1/presenter/')
+      .send({
+        name: 'Spot',
+        bio: 'I like to spend hours chasing a ball',
+        email: 'spot@spot.com'
+      })
+      .then((res) => expect(res.body).toEqual({
+        name: 'Spot',
+        bio: 'I like to spend hours chasing a ball',
+        email: 'spot@spot.com',
+        __v: 0,
+        _id: expect.any(String)
+      }));
+  });
+
   it('gets a presenter by id', () => {
     return request(app)
       .get(`/api/v1/presenter/${presenters[0]._id}`)
