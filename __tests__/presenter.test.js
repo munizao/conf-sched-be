@@ -80,5 +80,26 @@ describe('presentation routes', () => {
         });
       });
   });
+
+  it('can update a presenter', async() => {
+    const presenter = await Presenter.create({
+      name: 'Spot',
+      bio: 'I like the dog park',
+      email: 'spot@spot.com'
+    });
+    const id = presenter._id.toString();
+    return request(app)
+      .patch(`/api/v1/presenter/${id}`)
+      .send({ email: 'spottyspot@spot.com' })
+      .then((res) => {
+        return expect(res.body).toEqual({
+          __v: 0,
+          _id: id,
+          name: 'Spot',
+          bio: 'I like the dog park',
+          email: 'spottyspot@spot.com'
+        });
+      });
+  });
 });
 
