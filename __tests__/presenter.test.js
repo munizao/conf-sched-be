@@ -8,7 +8,7 @@ const Presenter = require('../lib/models/Presenter');
 const Presentation = require('../lib/models/Presentation');
 
 describe('presentation routes', () => {
-  
+
   beforeAll(() => {
     connect();
   });
@@ -46,17 +46,99 @@ describe('presentation routes', () => {
     ]);
   });
 
-  it('gets a presenter by id', async() => {
-    await request(app)
+  afterAll(() => {
+    return mongoose.connection.close();
+  });
+
+  it('can create a presenter', () => {
+    return request(app)
+      .post('/api/v1/presenter/')
+      .send({
+        name: 'Spot',
+        bio: 'I like to spend hours chasing a ball',
+        email: 'spot@spot.com'
+      })
+      .then((res) => expect(res.body).toEqual({
+        name: 'Spot',
+        bio: 'I like to spend hours chasing a ball',
+        email: 'spot@spot.com',
+        __v: 0,
+        _id: expect.any(String)
+      }));
+  });
+
+  it('gets a presenter by id', () => {
+    return request(app)
       .get(`/api/v1/presenter/${presenters[0]._id}`)
       .then((res) => {
-        return expect(res.body).toEqual({
+        expect(res.body).toEqual({
           _id: presenters[0]._id.toString(),
           __v: 0,
           name: 'N. Hazmat',
           email: 'test1@test.com',
           bio: 'I\'ve been everywhere, man.'
         });
+      });
+  });
+
+  it('gets all presenters', () => {
+    return request(app)
+      .get('/api/v1/presenter/')
+      .then(res => {
+        expect(res.body).toHaveLength(presentations.length);
+        presenters.forEach(presenter => {
+          expect(res.body).toContainEqual({
+            __v: 0,
+            _id: presenter.id,
+            bio: presenter.bio,
+            email: presenter.email,
+            name: presenter.name
+          });
+        });
+      });
+  });
+
+  it('can update a presenter', async() => {
+    const presenter = await Presenter.create({
+      name: 'Spot',
+      bio: 'I like the dog park',
+      email: 'spot@spot.com'
+    });
+    const id = presenter._id.toString();
+    return request(app)
+      .patch(`/api/v1/presenter/${id}`)
+      .send({ email: 'spottyspot@spot.com' })
+      .then((res) => {
+        return expect(res.body).toEqual({
+          __v: 0,
+          _id: id,
+          name: 'Spot',
+          bio: 'I like the dog park',
+          email: 'spottyspot@spot.com'
+        });
+      });
+  });
+
+  it('can delete a presenter by id', async() => {
+    const presenter = await Presenter.create({
+      name: 'Spot',
+      bio: 'I like the dog park',
+      email: 'spot@spot.com'
+    });
+    const id = presenter._id.toString();
+    request(app)
+      .delete(`/api/v1/presenter/${id}`)
+      .then(res => expect(res.body).toEqual({
+        __v: 0,
+        _id: id,
+        name: 'Spot',
+        bio: 'I like the dog park',
+        email: 'spot@spot.com'
+      }));
+    return request(app)
+      .get(`/api/v1/presenter/${id}`)
+      .then((res) => {
+        return expect(res.body).toEqual({});
       });
   });
 });
