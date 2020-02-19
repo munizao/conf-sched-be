@@ -101,5 +101,28 @@ describe('presentation routes', () => {
         });
       });
   });
+
+  it('can delete a presenter by id', async() => {
+    const presenter = await Presenter.create({
+      name: 'Spot',
+      bio: 'I like the dog park',
+      email: 'spot@spot.com'
+    });
+    const id = presenter._id.toString();
+    request(app)
+      .delete(`/api/v1/presenter/${id}`)
+      .then(res => expect(res.body).toEqual({
+        __v: 0,
+        _id: id,
+        name: 'Spot',
+        bio: 'I like the dog park',
+        email: 'spot@spot.com'
+      }));
+    return request(app)
+      .get(`/api/v1/presenter/${id}`)
+      .then((res) => {
+        return expect(res.body).toEqual({});
+      });
+  });
 });
 
